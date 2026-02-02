@@ -17,8 +17,3 @@ This app lets you:
 - Saves all webiste data in a .txt file.
 - Confirmation popup before saving.
 - Automatically clears input fields after saving.
-
-## How to Run
-1. Clone the repository:
-   ```bash
-   git clone <your-repo-link>
