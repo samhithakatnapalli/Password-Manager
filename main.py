@@ -1,6 +1,20 @@
+import json
 import random
 from tkinter import *
 from tkinter import messagebox
+
+# ----------------------------- SEARCH WEBSITE ---------------------------------- #
+def search_for_website():
+    site_name = website_entry.get()
+    try:
+        with open("user_data.json","r") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        messagebox.showinfo("Error", "File not found")
+    else:
+        if site_name in data:
+            messagebox.showinfo(f"{site_name}", f"Email used: {data[site_name]["email"]}\nPassword: {data[site_name]["password"]}")
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     password_entry.delete(0, END)
@@ -19,6 +33,12 @@ def save_password():
     user_website = website_entry.get()
     user_mail = mail_entry.get()
     user_password = password_entry.get()
+    user_data_dict = {
+        user_website: {
+        "email": user_mail,
+        "password": user_password
+        }
+    }
 
     if len(user_password) == 0 or len(user_website) == 0 or len(user_mail) == 0:
         messagebox.showerror("Error", "Please enter all required information")
@@ -28,12 +48,24 @@ def save_password():
                                      f"The details you entered:\nWebsite: {user_website}\nEmail/ Username: {user_mail}\nPassword: {user_password}\n"
                                      f"Want to save and continue?")
         if ask:
-            with open('user_data.txt', 'a') as file:
-                file.write(f"{user_website} | {user_mail} | {user_password}\n")
+            try:
+                with open('user_data.json', 'r') as file:
+                    #reading old data
+                    data = json.load(file)
+            except FileNotFoundError:
+                   with open("user_data.json", "w") as file:
+                       json.dump(user_data_dict, file, indent=4)
+            else:
+                # updating new data
+                data.update(user_data_dict)
 
-            website_entry.delete(0, END)
-            mail_entry.delete(0, END)
-            password_entry.delete(0, END)
+                with open("user_data.json","w") as file:
+                    #saving updated data
+                    json.dump(data, file, indent=4)
+            finally:
+                website_entry.delete(0, END)
+                mail_entry.delete(0, END)
+                password_entry.delete(0, END)
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -50,9 +82,13 @@ canvas.grid(row= 2, column=3)
 # WEBSITE NAME
 website_text = Label(text= "Website:", font=("Sans Serif", 10))
 website_text.grid(row=3, column=2)
-website_entry = Entry(width=30)    #or set width to 35
+website_entry = Entry(width=33)    #or set width to 35
 website_entry.focus()
-website_entry.grid(row= 3, column=3, columnspan=2, sticky=W+E)
+website_entry.grid(row= 3, column=3, columnspan=2, sticky=W)
+
+# SEARCH WEBSITE BUTTON
+search_button = Button(text="Search", command=search_for_website)
+search_button.grid(row=3, column=4, sticky=E+W)
 
 # MAIL/ USERID
 mail_text = Label(text= "Email / Username:", font=("Sans Serif", 10))
