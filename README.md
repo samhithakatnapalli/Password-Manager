@@ -14,6 +14,7 @@ This app lets you:
 
 ## Features
 - Random password generator.
-- Saves all webiste data in a .txt file.
+- Saves all webiste data in a .json file.
+- Webiste credentials can be retrieved using a "search" button.
 - Confirmation popup before saving.
 - Automatically clears input fields after saving.
